@@ -1,40 +1,42 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 
 namespace ImageToAscii
 {
     using System;
+    using Helpers;
 
     internal class ImageConverter
     {
-        private const string AsciiVocab = "Ñ@#W$9876543210?!abc;:+=-,._ ";
-        private readonly string imageUrl;
+        private readonly string asciiVocab;
         private readonly int width;
         private readonly int height;
 
-        public ImageConverter(string url, int width, int height)
+        public ImageConverter(string vocab, int width, int height)
         {
-            this.imageUrl = url;
+            this.asciiVocab = vocab;
             this.width = width;
             this.height = height;
         }
 
-        public string[] GetStringImageMatrix(bool reverseVocab = false)
+        public string[] GetStringImageMatrix(string url, bool reverseVocab = false)
         {
-            Bitmap bitmap = new Bitmap(this.imageUrl);
+            Bitmap bitmap = new Bitmap(url);
 
             if (bitmap.Height > width || bitmap.Width > height)
             {
                 bitmap = this.ResizeImage(bitmap);
             }
 
-            var asciiLength = AsciiVocab.Length - 1;
-            var asciiVocab = AsciiVocab;
+            var asciiLength = this.asciiVocab.Length - 1;
+            var convertedVocab = this.asciiVocab;
             if (reverseVocab)
             {
-                asciiVocab = AsciiVocab.Reverse();
+                convertedVocab = this.asciiVocab.Reverse();
             }
             string[] asciiPicture = new string[bitmap.Height];
 
@@ -54,7 +56,7 @@ namespace ImageToAscii
 
                     var convertedAvg = this.ConvertToNewRange(avg, 255, asciiLength);
 
-                    char symbol = asciiVocab[convertedAvg];
+                    char symbol = convertedVocab[convertedAvg];
                     horizontalLine += symbol;
                 }
 
@@ -63,6 +65,8 @@ namespace ImageToAscii
 
             return asciiPicture;
         }
+
+        public IEnumerable<string> CleanImage(string[] image) => image.Where(line => !string.IsNullOrWhiteSpace(line));
 
         private Bitmap ResizeImage(Bitmap bitmap)
         {

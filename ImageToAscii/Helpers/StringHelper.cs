@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImageToAscii
+namespace ImageToAscii.Helpers
 {
     public static class StringHelper
     {

@@ -2,11 +2,9 @@
 
 namespace ImageToAscii.Helpers
 {
-    public class FileHelper
+    public static class FileHelper
     {
-        public FileHelper() {}
-
-        public string[] GetFileNamesInDirectory(string directory)
+        public static string[] GetFileNamesInDirectory(string directory)
         {
             string[] result = null;
 
@@ -18,6 +16,11 @@ namespace ImageToAscii.Helpers
             }
 
             return result;
+        }
+
+        public static string GetImageUrl(string file)
+        {
+            return $"./images/{file}";
         }
     }
 }
