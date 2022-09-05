@@ -1,10 +1,10 @@
-﻿using System.Linq;
+﻿using ImageToAscii.Helpers;
+using System.Linq;
 using System.Threading;
 
 namespace ImageToAscii
 {
     using System;
-    using System.Windows.Forms;
 
     internal class Program
     {
@@ -24,7 +24,7 @@ namespace ImageToAscii
 
             Console.SetWindowSize(width + widthOffset, height + heightOffset);
 
-            var imageRenderer = new ImageRenderer($"./images/{ImageName}", width, height);
+            var imageRenderer = new ImageConverter($"./images/{ImageName}", width, height);
 
             var stringImage = imageRenderer.GetStringImageMatrix(true);
 
@@ -40,11 +40,11 @@ namespace ImageToAscii
 
             Thread.Sleep(milliseconds);
 
-            string[] ImageList = fileHelper.GetFilenamesInDirectory("images");
+            string[] ImageList = fileHelper.GetFileNamesInDirectory("images");
 
             foreach (var image in ImageList)
             {
-                var imgRend = new ImageRenderer(image, width, height);
+                var imgRend = new ImageConverter(image, width, height);
 
                 var imageMatrix = imgRend.GetStringImageMatrix(true);
 

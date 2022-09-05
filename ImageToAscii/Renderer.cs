@@ -1,4 +1,4 @@
-﻿using System.Threading;
+﻿using ImageToAscii.Models;
 
 namespace ImageToAscii
 {
@@ -18,13 +18,6 @@ namespace ImageToAscii
         private readonly int combinedBorderOffset = 2;
         private readonly string[,] pixelMatrix;
 
-        private string ulCorner = "╔";
-        private string llCorner = "╚";
-        private string urCorner = "╗";
-        private string lrCorner = "╝";
-        private string vertical = "║";
-        private string horizontal = "═";
-
         public Renderer(
             int width,
             int height)
@@ -37,16 +30,16 @@ namespace ImageToAscii
 
             this.pixelMatrix = new string[this.height + combinedBorderOffset, this.width + combinedBorderOffset];
 
-            this.pixelMatrix[0, 0] = ulCorner;
-            this.pixelMatrix[0, this.offsetWidth] = urCorner;
-            this.pixelMatrix[this.offsetHeight, this.offsetWidth] = lrCorner;
-            this.pixelMatrix[this.offsetHeight, 0] = llCorner;
+            this.pixelMatrix[0, 0] = Borders.UlCorner;
+            this.pixelMatrix[0, this.offsetWidth] = Borders.UrCorner;
+            this.pixelMatrix[this.offsetHeight, this.offsetWidth] = Borders.LrCorner;
+            this.pixelMatrix[this.offsetHeight, 0] = Borders.LlCorner;
             this.PrepareBorder();
         }
 
         public void DrawBorder(string[] image = null)
         {
-            Console.Clear();
+            CompleteClear();
 
             bool drawImage = image is { Length: > 0 };
 
@@ -61,57 +54,45 @@ namespace ImageToAscii
                     {
                         if (column == 0) //Corner LT
                         {
-                            line += this.ulCorner;
+                            line += Borders.UlCorner;
                         }
                         else if (column == (this.offsetWidth)) //Corner RT
                         {
-                            line += this.urCorner;
+                            line += Borders.UrCorner;
                         }
                         else //Top line
                         {
-                            line += this.horizontal;
+                            line += Borders.Horizontal;
                         }
                     }
                     else if (row == (this.offsetHeight))
                     {
                         if (column == 0) //Corner LB
                         {
-                            line += this.llCorner;
+                            line += Borders.LlCorner;
                         }
                         else if (column == (this.offsetWidth)) //Corner RB
                         {
-                            line += this.lrCorner;
+                            line += Borders.LrCorner;
                         }
                         else //Bot line
                         {
-                            line += this.horizontal;
+                            line += Borders.Horizontal;
                         }
                     }
                     else
                     {
                         if (column == 0) //Left line
                         {
-                            line += this.vertical;
+                            line += Borders.Vertical;
                         }
                         else if (column == (this.offsetWidth)) //Right line
                         {
-                            line += this.vertical;
+                            line += Borders.Vertical;
                         }
                         else
                         {
-                            //var correctedRow = row != 0 ? row - 1 : row;
-                            //var correctColumn = column != 0 ? column - 1 : column;
-
-                            //if (drawImage && 
-                            //    (image.Length + 1) > row && 
-                            //    (image[correctedRow].Length + 1) > column)
-                            //{
-                            //    line += image[correctedRow][correctColumn];
-                            //}
-                            //else
-                            //{
                             line += ' ';
-                            //}
                         }
                     }
                 }
@@ -151,6 +132,9 @@ namespace ImageToAscii
             }
         }
 
+        /// <summary>
+        /// Clear only picture space not borders
+        /// </summary>
         public void Clear()
         {
             string line = new string(' ', this.width);
@@ -162,8 +146,28 @@ namespace ImageToAscii
             }
         }
 
+        /// <summary>
+        /// Completely clears console
+        /// </summary>
+        public void CompleteClear() => Console.Clear();
+
+        /// <summary>
+        /// Writes pixel in last line cursor was
+        /// </summary>
+        /// <param name="pixel"></param>
         private void Write(char pixel) => Console.Write(pixel);
+
+        /// <summary>
+        /// Writes complete line in current selected line
+        /// </summary>
+        /// <param name="line">text string to write</param>
         private void WriteLine(string line) => Console.Write(line);
+
+        /// <summary>
+        /// Set console's cursor position
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y position</param>
         private void CursorPos(int x, int y) => Console.SetCursorPosition(x, y);
 
         private void PrepareBorder()

@@ -7,14 +7,14 @@ namespace ImageToAscii
 {
     using System;
 
-    internal class ImageRenderer
+    internal class ImageConverter
     {
         private const string AsciiVocab = "Ñ@#W$9876543210?!abc;:+=-,._ ";
         private readonly string imageUrl;
         private readonly int width;
         private readonly int height;
 
-        public ImageRenderer(string url, int width, int height)
+        public ImageConverter(string url, int width, int height)
         {
             this.imageUrl = url;
             this.width = width;
@@ -115,10 +115,8 @@ namespace ImageToAscii
 
         private int ConvertToNewRange(int value, int maxValue, int newRangeTo)
         {
-            int originalRangeMin = 0;
             int originalRangeMax = maxValue;
-
-            int newRangeMin = 0;
+            
             int newRangeMax = newRangeTo;
 
             var test = (value * 100) / originalRangeMax;

@@ -1,12 +1,12 @@
 ﻿using System.IO;
 
-namespace ImageToAscii
+namespace ImageToAscii.Helpers
 {
     public class FileHelper
     {
         public FileHelper() {}
 
-        public string[] GetFilenamesInDirectory(string directory)
+        public string[] GetFileNamesInDirectory(string directory)
         {
             string[] result = null;
 
