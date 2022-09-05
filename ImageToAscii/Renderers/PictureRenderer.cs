@@ -31,7 +31,11 @@ namespace ImageToAscii.Renderers
 
         public override void Init()
         {
-            this.DrawBorder();
+            if (this.Config.EnableBorders)
+            {
+                this.DrawBorder();
+            }
+            
 
             if (this.imageCycle)
             {

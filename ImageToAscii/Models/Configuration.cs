@@ -18,5 +18,6 @@
 
         public RenderMode Mode { get; set; } = RenderMode.ImageContinuous;
         public int CycleDelay { get; set; } = 2000; // milliseconds
+        public bool EnableBorders { get; set; } = true;
     }
 }
