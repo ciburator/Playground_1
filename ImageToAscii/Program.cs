@@ -14,7 +14,7 @@ namespace ImageToAscii
         static void Main(string[] args)
         {
             var configuration = new Configuration();
-            var mainRenderer = new MainRenderer(configuration);
+            var mainRenderer = new ConsoleRenderer(configuration);
         }
     }
 }

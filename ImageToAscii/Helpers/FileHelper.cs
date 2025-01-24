@@ -20,6 +20,7 @@ namespace ImageToAscii.Helpers
 
         public static string GetImageUrl(string file)
         {
+            if (string.IsNullOrWhiteSpace(file)) return string.Empty;
             return $"./images/{file}";
         }
     }
