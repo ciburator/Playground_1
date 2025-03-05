@@ -1,27 +1,28 @@
-﻿using System.IO;
+﻿namespace ImageToAscii.Helpers;
 
-namespace ImageToAscii.Helpers
+using System;
+using System.IO;
+
+public static class FileHelper
 {
-    public static class FileHelper
+    public static string[] GetFileNamesInDirectory(string directory)
     {
-        public static string[] GetFileNamesInDirectory(string directory)
+        string[] result = null;
+
+        string path = "./" + directory;
+
+        if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(path))
         {
-            string[] result = null;
-
-            string path = "./" + directory;
-
-            if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(path))
-            {
-                result = Directory.GetFiles(path);
-            }
-
-            return result;
+            result = Directory.GetFiles(path);
         }
 
-        public static string GetImageUrl(string file)
-        {
-            if (string.IsNullOrWhiteSpace(file)) return string.Empty;
-            return $"./images/{file}";
-        }
+        return result;
+    }
+
+    public static string GetImageUrl(string file)
+    {
+        var dir = Environment.CurrentDirectory;
+        if (string.IsNullOrWhiteSpace(file)) return string.Empty;
+        return $"./images/{file}";
     }
 }

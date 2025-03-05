@@ -5,16 +5,15 @@ using System.Threading;
 using Helpers;
 using Converters;
 using Models;
-using System.Data.Common;
 
 internal class ImageProcessor : BaseProcessor
 {
-    private readonly bool imageCycle;
+    private readonly bool _imageCycle;
     public ImageConverter ImageConverter { get; }
 
     public ImageProcessor(Configuration config, bool imageCycle = false) : base(config)
     {
-        this.imageCycle = imageCycle;
+        this._imageCycle = imageCycle;
         PixelMatrix = new string[
             Height + CombinedBorderOffset,
             Width + CombinedBorderOffset];
@@ -56,7 +55,7 @@ internal class ImageProcessor : BaseProcessor
             Draw(borders);
         }
 
-        if (imageCycle)
+        if (_imageCycle)
         {
             string[] imageList = FileHelper.GetFileNamesInDirectory("images");
             bool reverseVocab = Config.ReverseVocab;

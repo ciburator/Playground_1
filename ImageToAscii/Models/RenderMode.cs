@@ -1,9 +1,8 @@
-﻿namespace ImageToAscii.Models
+﻿namespace ImageToAscii.Models;
+
+public enum RenderMode
 {
-    public enum RenderMode
-    {
-        Image,
-        Stream,
-        ImageContinuous
-    }
+    Image,
+    Stream,
+    ImageContinuous
 }
