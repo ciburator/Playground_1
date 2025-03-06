@@ -1,5 +1,6 @@
 ﻿namespace ImageToAscii.Interfaces;
 
+using Handlers;
 using ImageToAscii.Models;
 using Renderers;
 

@@ -2,10 +2,14 @@
 
 using System;
 using System.Threading;
+
 using Helpers;
 
 using Models;
+
 using Renderers;
+
+using static System.Net.Mime.MediaTypeNames;
 
 internal class Program
 {
@@ -18,7 +22,7 @@ internal class Program
         var configuration = new Configuration();
         //var mainRenderer = new ConsoleRenderer(configuration);
 
-        var newConsoleRenderer = new ConsoleRendererV2(mode, new string[]{images});
+        var newConsoleRenderer = new ConsoleRendererV2(mode, new string[] { images });
     }
 
     public static RenderMode InitiateModeSelection()
@@ -69,7 +73,13 @@ internal class Program
             int index = 1;
             foreach (var file in files)
             {
-                Console.WriteLine($"{index} - {file}");
+                var charLocation = file.IndexOf('\\', StringComparison.Ordinal);
+                var fileName = file;
+                if (charLocation > 0)
+                {
+                    fileName = file.Substring(charLocation+1, (file.Length- charLocation-1));
+                }
+                Console.WriteLine($"{index} - {fileName}");
                 index++;
             }
 
@@ -84,7 +94,16 @@ internal class Program
                 Thread.Sleep(1000);
             }
             else
-                return files[input - 1];
+            {
+                var file = files[input - 1];
+                var charLocation = file.IndexOf('\\', StringComparison.Ordinal);
+                var fileName = file;
+                if (charLocation > 0)
+                {
+                    fileName = file.Substring(charLocation + 1, (file.Length - charLocation - 1)); ;
+                }
+                return fileName;
+            }
         }
     }
 }
