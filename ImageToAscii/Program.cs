@@ -1,7 +1,6 @@
 ﻿namespace ImageToAscii;
 
 using System;
-using System.Reflection;
 using System.Threading;
 
 using AForge.Video.DirectShow;
@@ -22,16 +21,16 @@ internal class Program
         var mode = InitiateModeSelection();
 
         string[] images = new string[1];
-        FilterInfo? camera = null;
+        string? cameraId = null;
 
         if (mode != RenderMode.Stream)
             images = InitiateImageSelection(mode);
         else
         {
-            camera = SelectCamera();
+            cameraId = SelectCamera();
         }
 
-        var newConsoleRenderer = new ConsoleRendererV2(mode, images, camera);
+        var newConsoleRenderer = new ConsoleRendererV2(mode, images, cameraId);
 
         var backgroundThread = new Thread(newConsoleRenderer.Start);
 
@@ -128,7 +127,7 @@ internal class Program
         return FileHelper.GetFileNamesInDirectory("images");
     }
 
-    public static FilterInfo SelectCamera()
+    public static string SelectCamera()
     {
         var cameras = CameraConverter.GetAllConnectedCameras();
 
@@ -153,7 +152,7 @@ internal class Program
             }
             else
             {
-                return cameras[input - 1];
+                return cameras[input - 1].MonikerString;
             }
         }
     }

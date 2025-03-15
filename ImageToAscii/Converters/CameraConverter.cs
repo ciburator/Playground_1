@@ -5,13 +5,13 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-using AForge.Video;
 using AForge.Video.DirectShow;
 using Helpers;
 
 public class CameraConverter: IDisposable
 {
     private readonly FilterInfo _camera;
+    private readonly string _cameraId;
     private readonly string _asciiVocab;
     private readonly int _width;
     private readonly int _height;
@@ -19,9 +19,9 @@ public class CameraConverter: IDisposable
     private VideoCaptureDevice _videoSource;
     public event EventHandler<string[]> NewFrame;
 
-    public CameraConverter(FilterInfo camera, string vocab, int width, int height, bool reverseVocab = false)
+    public CameraConverter(string cameraId, string vocab, int width, int height, bool reverseVocab = false)
     {
-        _camera = camera;
+        _cameraId = cameraId;
         _asciiVocab = vocab;
         _width = width;
         _height = height;
@@ -37,7 +37,7 @@ public class CameraConverter: IDisposable
 
     public void StartRecording()
     {
-        _videoSource = new VideoCaptureDevice(_camera.MonikerString);
+        _videoSource = new VideoCaptureDevice(_cameraId);
 
         try
         {

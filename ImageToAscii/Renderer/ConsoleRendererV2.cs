@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using AForge.Video.DirectShow;
 using ConsoleHandler;
 using ConsoleHandler.Models;
 
@@ -19,17 +18,17 @@ public class ConsoleRendererV2
 {
     private readonly RenderMode _mode;
     private readonly string[] _imageNames;
-    private readonly FilterInfo? _camera;
+    private readonly string _cameraId;
     private readonly ConsoleHandler _handler;
 
     private ImageConverter? _imageConverter;
     private CameraConverter? _cameraConverter;
 
-    public ConsoleRendererV2(RenderMode mode, string[] imageNames, FilterInfo? camera)
+    public ConsoleRendererV2(RenderMode mode, string[] imageNames, string? cameraId)
     {
         _mode = mode;
         _imageNames = imageNames;
-        _camera = camera;
+        _cameraId = cameraId;
 
         var handlerConfiguration = new ConsoleConfiguration
         {
@@ -151,6 +150,7 @@ public class ConsoleRendererV2
                 for (int y = 0; y < image.data.Length; y++)
                 {
                     _handler.WriteLine(y, image.data[y], 1);
+                    Thread.Sleep(10);
                 }
 
                 timer.Stop();
@@ -164,11 +164,11 @@ public class ConsoleRendererV2
 
     private void StreamVideoDisplay()
     {
-        if (_camera == null)
+        if (_cameraId == null)
             throw new Exception("No camera selected");
 
         _cameraConverter = new CameraConverter(
-            _camera, 
+            _cameraId, 
             MainConfiguration.AsciiVocab,
             MainConfiguration.Width,
             MainConfiguration.Height,
