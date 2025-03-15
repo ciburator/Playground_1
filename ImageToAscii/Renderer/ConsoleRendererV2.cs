@@ -150,14 +150,14 @@ public class ConsoleRendererV2
                 for (int y = 0; y < image.data.Length; y++)
                 {
                     _handler.WriteLine(y, image.data[y], 1);
-                    Thread.Sleep(10);
+                    Thread.Sleep(MainConfiguration.RenderDelay);
                 }
 
                 timer.Stop();
 
                 Debug.WriteLine($"Drawing {image.name} took time to process {timer.ElapsedMilliseconds}");
 
-                Thread.Sleep(300);
+                Thread.Sleep(MainConfiguration.CycleDelay);
             }
         }
     }

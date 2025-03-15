@@ -4,5 +4,6 @@ public enum RenderMode
 {
     Image,
     Stream,
-    ImageContinuous
+    ImageContinuous,
+    None
 }
