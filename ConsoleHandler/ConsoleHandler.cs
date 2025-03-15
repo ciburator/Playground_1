@@ -208,7 +208,7 @@ public class ConsoleHandler
         ConsoleCanvasConfigurationExtended? result = null;
 
         if ( _lastCanvas != null && (_lastCanvas.Position == canvasPosition || _lastCanvas?.Name == canvasName))
-            return _lastCanvas;
+            return _lastCanvas!;
 
         if (canvasPosition != null)
             result = GetCanvasByPosition((int)canvasPosition);

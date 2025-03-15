@@ -28,7 +28,10 @@ public static class FileHelper
 
         if (file.Contains("\\images\\"))
             return Path.Join(dir, file);
-        
+
+        if (file.Contains("images\\"))
+            return Path.Join(dir, file);
+
         if (string.IsNullOrWhiteSpace(file)) return string.Empty;
         return Path.Join(dir, $"\\images\\{file}");
     }

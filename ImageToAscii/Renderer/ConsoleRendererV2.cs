@@ -1,11 +1,11 @@
-﻿namespace ImageToAscii.Renderers;
+﻿namespace ImageToAscii.Renderer;
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms.VisualStyles;
+using AForge.Video.DirectShow;
 using ConsoleHandler;
 using ConsoleHandler.Models;
 
@@ -19,13 +19,17 @@ public class ConsoleRendererV2
 {
     private readonly RenderMode _mode;
     private readonly string[] _imageNames;
+    private readonly FilterInfo? _camera;
     private readonly ConsoleHandler _handler;
-    private readonly ImageConverter _imageConverter;
 
-    public ConsoleRendererV2(RenderMode mode, string[] imageNames)
+    private ImageConverter? _imageConverter;
+    private CameraConverter? _cameraConverter;
+
+    public ConsoleRendererV2(RenderMode mode, string[] imageNames, FilterInfo? camera)
     {
         _mode = mode;
         _imageNames = imageNames;
+        _camera = camera;
 
         var handlerConfiguration = new ConsoleConfiguration
         {
@@ -50,11 +54,6 @@ public class ConsoleRendererV2
         };
 
         _handler = new ConsoleHandler(handlerConfiguration);
-
-        _imageConverter = new ImageConverter(
-            MainConfiguration.AsciiVocab,
-            MainConfiguration.Width,
-            MainConfiguration.Height);
     }
 
     public void Start()
@@ -104,6 +103,11 @@ public class ConsoleRendererV2
 
     private void SinglePictureDisplay(string imageName, bool clear = true)
     {
+        _imageConverter = new ImageConverter(
+            MainConfiguration.AsciiVocab,
+            MainConfiguration.Width,
+            MainConfiguration.Height);
+
         if (clear)
             _handler.Clear(1);
 
@@ -119,6 +123,11 @@ public class ConsoleRendererV2
 
     private void ContinuousPictureDisplay(string[] images)
     {
+        _imageConverter = new ImageConverter(
+            MainConfiguration.AsciiVocab,
+            MainConfiguration.Width,
+            MainConfiguration.Height);
+
         var timer = new Stopwatch();
 
         IList<(string name, string[] data)> convertedImageList = new List<(string name, string[] data)>();
@@ -148,13 +157,33 @@ public class ConsoleRendererV2
 
                 Debug.WriteLine($"Drawing {image.name} took time to process {timer.ElapsedMilliseconds}");
 
-                //Thread.Sleep(100);
+                Thread.Sleep(300);
             }
         }
     }
 
     private void StreamVideoDisplay()
     {
-        throw new NotImplementedException("Stream video display is not yet implemented");
+        if (_camera == null)
+            throw new Exception("No camera selected");
+
+        _cameraConverter = new CameraConverter(
+            _camera, 
+            MainConfiguration.AsciiVocab,
+            MainConfiguration.Width,
+            MainConfiguration.Height,
+            MainConfiguration.ReverseVocab);
+
+        _cameraConverter.NewFrame += _cameraConverter_NewFrame;
+
+        _cameraConverter.StartRecording();
+    }
+
+    private void _cameraConverter_NewFrame(object sender, string[] image)
+    {
+        for (int y = 0; y < image.Length; y++)
+        {
+            _handler.WriteLine(y, image[y], 1);
+        }
     }
 }

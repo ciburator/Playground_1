@@ -2,13 +2,13 @@
 
 public static class MainConfiguration
 {
-    public const string AsciiVocab = "Ñ@#W$9876543210?!abc;:+=-,._ ";
+    public const string AsciiVocab = "Ñ@#W$9876543210?!abc;:*+=-,._ ";
     public const bool ReverseVocab = true;
 
     /// <summary>
     /// MA constX 150
     /// </summary>
-    public const int Width = 160;
+    public const int Width = 200;
 
     /// <summary>
     /// MA constX 100

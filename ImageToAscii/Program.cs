@@ -1,13 +1,18 @@
 ﻿namespace ImageToAscii;
 
 using System;
+using System.Reflection;
 using System.Threading;
+
+using AForge.Video.DirectShow;
+
+using Converters;
 
 using Helpers;
 
 using Models;
 
-using Renderers;
+using Renderer;
 
 internal class Program
 {
@@ -16,9 +21,17 @@ internal class Program
     {
         var mode = InitiateModeSelection();
 
-        var images = InitiateImageSelection(mode);
+        string[] images = new string[1];
+        FilterInfo? camera = null;
 
-        var newConsoleRenderer = new ConsoleRendererV2(mode, images);
+        if (mode != RenderMode.Stream)
+            images = InitiateImageSelection(mode);
+        else
+        {
+            camera = SelectCamera();
+        }
+
+        var newConsoleRenderer = new ConsoleRendererV2(mode, images, camera);
 
         var backgroundThread = new Thread(newConsoleRenderer.Start);
 
@@ -110,8 +123,38 @@ internal class Program
                 }
             }
 
-        
+
 
         return FileHelper.GetFileNamesInDirectory("images");
+    }
+
+    public static FilterInfo SelectCamera()
+    {
+        var cameras = CameraConverter.GetAllConnectedCameras();
+
+        while (true)
+        {
+            int index = 1;
+            foreach (FilterInfo cam in cameras)
+            {
+                Console.WriteLine($"{index} - {cam.Name}");
+                index++;
+            }
+
+            Console.WriteLine("Please select image by typing in the number of image:");
+            var inputString = Console.ReadLine();
+
+            var input = int.Parse(inputString);
+
+            if (input <= 0 && input >= index)
+            {
+                Console.WriteLine("Selected image number is invalid");
+                Thread.Sleep(1000);
+            }
+            else
+            {
+                return cameras[input - 1];
+            }
+        }
     }
 }
