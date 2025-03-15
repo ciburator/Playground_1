@@ -2,10 +2,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+
+using ConsoleHandler;
+using ConsoleHandler.Models;
+
 using Converters;
-using Handlers;
+
 using Helpers;
+
 using Models;
 
 public class ConsoleRendererV2
@@ -37,7 +44,7 @@ public class ConsoleRendererV2
                     Name = "Picture",
                     Height = MainConfiguration.Height,
                     Position = 1,
-                    ShowBorder = false
+                    ShowBorder = true
                 }
             }
         };
@@ -48,10 +55,13 @@ public class ConsoleRendererV2
             MainConfiguration.AsciiVocab,
             MainConfiguration.Width,
             MainConfiguration.Height);
+    }
 
+    public void Start()
+    {
         UpdateHeader();
 
-        SelectImageProcessor(imageNames);
+        SelectImageProcessor(_imageNames);
     }
 
     private void SelectImageProcessor(string[] imageNames)
@@ -62,14 +72,13 @@ public class ConsoleRendererV2
                 SinglePictureDisplay(imageNames.First());
                 break;
             case RenderMode.ImageContinuous:
-                ContinuousPictureDisplay();
+                ContinuousPictureDisplay(imageNames);
                 break;
             case RenderMode.Stream:
                 StreamVideoDisplay();
                 break;
             default:
                 throw new Exception("Unknown mode selected");
-                break;
         }
     }
 
@@ -77,7 +86,7 @@ public class ConsoleRendererV2
     {
         _handler.Clear(0);
 
-        _handler.WriteLine($"Selected mode is: {Enum.GetName(_mode)}", null, "Header");
+        _handler.WriteLine(0, $"Selected mode is: {Enum.GetName(_mode)}", null, "Header");
 
         var imagesText = "Selected ";
 
@@ -90,12 +99,13 @@ public class ConsoleRendererV2
             imagesText += $" image: {_imageNames.First()}";
         }
 
-        _handler.WriteLine(imagesText, null, "Header");
+        _handler.WriteLine(1, imagesText, null, "Header");
     }
 
-    private void SinglePictureDisplay(string imageName)
+    private void SinglePictureDisplay(string imageName, bool clear = true)
     {
-        _handler.Clear(1);
+        if (clear)
+            _handler.Clear(1);
 
         var imageUrl = FileHelper.GetImageUrl(imageName);
         var stringImage = _imageConverter.GetStringImageMatrix(
@@ -103,17 +113,35 @@ public class ConsoleRendererV2
 
         for (int y = 0; y < stringImage.Length; y++)
         {
-            for (int x = 0; x < stringImage[y].Length; x++)
-            {
-                char currentPixel = stringImage[y][x];
-                _handler.Write(x,y,currentPixel,1,"Picture");
-            }
+            _handler.WriteLine(y, stringImage[y], 1);
+
+            //for (int x = 0; x < stringImage[y].Length; x++)
+            //{
+            //    char currentPixel = stringImage[y][x];
+            //    _handler.Write(x,y,currentPixel,1,"Picture");
+            //}
         }
     }
 
-    private void ContinuousPictureDisplay()
+    private void ContinuousPictureDisplay(string[] images)
     {
-        throw new NotImplementedException("Continuous picture display is not yet implemented");
+        var timer = new Stopwatch();
+        while (true)
+        {
+            foreach (var image in images)
+            {
+                timer.Reset();
+                timer.Start();
+
+                SinglePictureDisplay(image, false);
+
+                timer.Stop();
+
+                Debug.WriteLine($"Drawing {image} took time to process {timer.ElapsedMilliseconds}");
+
+                //Thread.Sleep(100);
+            }
+        }
     }
 
     private void StreamVideoDisplay()

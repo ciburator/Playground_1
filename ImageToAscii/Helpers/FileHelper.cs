@@ -9,7 +9,7 @@ public static class FileHelper
     {
         string[] result = null;
 
-        string path = "./" + directory;
+        string path = ".\\" + directory;
 
         if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(path))
         {
@@ -22,7 +22,14 @@ public static class FileHelper
     public static string GetImageUrl(string file)
     {
         var dir = Environment.CurrentDirectory;
+
+        if (file.Contains(".\\images\\"))
+            return Path.Join(dir, file.Substring(1, file.Length - 1));
+
+        if (file.Contains("\\images\\"))
+            return Path.Join(dir, file);
+        
         if (string.IsNullOrWhiteSpace(file)) return string.Empty;
-        return $"./images/{file}";
+        return Path.Join(dir, $"\\images\\{file}");
     }
 }

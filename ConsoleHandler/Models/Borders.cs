@@ -1,6 +1,6 @@
-﻿namespace ImageToAscii.Models;
+﻿namespace ConsoleHandler.Models;
 
-public static class Borders
+internal static class Borders
 {
     public static string UlCorner = "╔";
     public static string LlCorner = "╚";

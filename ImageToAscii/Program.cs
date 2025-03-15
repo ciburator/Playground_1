@@ -9,20 +9,22 @@ using Models;
 
 using Renderers;
 
-using static System.Net.Mime.MediaTypeNames;
-
 internal class Program
 {
     [STAThread]
     static void Main(string[] args)
     {
         var mode = InitiateModeSelection();
-        var images = InitiateImageSelection();
 
-        var configuration = new Configuration();
-        //var mainRenderer = new ConsoleRenderer(configuration);
+        var images = InitiateImageSelection(mode);
 
-        var newConsoleRenderer = new ConsoleRendererV2(mode, new string[] { images });
+        var newConsoleRenderer = new ConsoleRendererV2(mode, images);
+
+        var backgroundThread = new Thread(newConsoleRenderer.Start);
+
+        backgroundThread.Start();
+
+        Console.ReadKey();
     }
 
     public static RenderMode InitiateModeSelection()
@@ -63,47 +65,53 @@ internal class Program
         }
     }
 
-    public static string InitiateImageSelection()
+    public static string[] InitiateImageSelection(RenderMode mode)
     {
-        while (true)
-        {
-            Console.Clear();
-            var files = FileHelper.GetFileNamesInDirectory("images");
-
-            int index = 1;
-            foreach (var file in files)
+        if (mode == RenderMode.Image)
+            while (true)
             {
-                var charLocation = file.IndexOf('\\', StringComparison.Ordinal);
-                var fileName = file;
-                if (charLocation > 0)
+                Console.Clear();
+                var files = FileHelper.GetFileNamesInDirectory("images");
+
+                int index = 1;
+                foreach (var file in files)
                 {
-                    fileName = file.Substring(charLocation+1, (file.Length- charLocation-1));
+                    var charLocation = file.IndexOf('\\', StringComparison.Ordinal);
+                    var fileName = file;
+                    if (charLocation > 0)
+                    {
+                        fileName = file.Substring(charLocation + 1, (file.Length - charLocation - 1));
+                    }
+                    Console.WriteLine($"{index} - {fileName}");
+                    index++;
                 }
-                Console.WriteLine($"{index} - {fileName}");
-                index++;
-            }
 
-            Console.WriteLine("Please select image by typing in the number of image:");
-            var inputString = Console.ReadLine();
+                Console.WriteLine("Please select image by typing in the number of image:");
+                var inputString = Console.ReadLine();
 
-            var input = int.Parse(inputString);
+                var input = int.Parse(inputString);
 
-            if (input <= 0 && input >= index)
-            {
-                Console.WriteLine("Selected image number is invalid");
-                Thread.Sleep(1000);
-            }
-            else
-            {
-                var file = files[input - 1];
-                var charLocation = file.IndexOf('\\', StringComparison.Ordinal);
-                var fileName = file;
-                if (charLocation > 0)
+                if (input <= 0 && input >= index)
                 {
-                    fileName = file.Substring(charLocation + 1, (file.Length - charLocation - 1)); ;
+                    Console.WriteLine("Selected image number is invalid");
+                    Thread.Sleep(1000);
                 }
-                return fileName;
+                else
+                {
+                    var file = files[input - 1];
+                    var charLocation = file.IndexOf('\\', StringComparison.Ordinal);
+                    var fileName = file;
+                    if (charLocation > 0)
+                    {
+                        fileName = file.Substring(charLocation + 1, (file.Length - charLocation - 1)); ;
+                    }
+
+                    return new[] { fileName };
+                }
             }
-        }
+
+        
+
+        return FileHelper.GetFileNamesInDirectory("images");
     }
 }

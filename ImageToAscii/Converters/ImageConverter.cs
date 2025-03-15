@@ -42,11 +42,11 @@ internal class ImageConverter
             return blankPicture;
         }
 
-        Bitmap bitmap = new Bitmap(url);
-
+        using Bitmap bitmap = new Bitmap(url);
+        Bitmap newBitmap = bitmap;
         if (bitmap.Height > _width || bitmap.Width > _height)
         {
-            bitmap = ResizeImage(bitmap);
+            newBitmap = ResizeImage(bitmap);
         }
 
         var asciiLength = _asciiVocab.Length - 1;
@@ -55,14 +55,14 @@ internal class ImageConverter
         {
             convertedVocab = _asciiVocab.Reverse();
         }
-        string[] asciiPicture = new string[bitmap.Height];
+        string[] asciiPicture = new string[newBitmap.Height];
 
-        for (int y = 0; y < bitmap.Height; y++)
+        for (int y = 0; y < newBitmap.Height; y++)
         {
             string horizontalLine = string.Empty;
-            for (int x = 0; x < bitmap.Width; x++)
+            for (int x = 0; x < newBitmap.Width; x++)
             {
-                Color pixel = bitmap.GetPixel(x, y);
+                Color pixel = newBitmap.GetPixel(x, y);
 
                 var r = pixel.R;
                 var g = pixel.G;
