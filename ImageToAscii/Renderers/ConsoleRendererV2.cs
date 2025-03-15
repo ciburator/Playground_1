@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-
+using System.Windows.Forms.VisualStyles;
 using ConsoleHandler;
 using ConsoleHandler.Models;
 
@@ -114,30 +114,39 @@ public class ConsoleRendererV2
         for (int y = 0; y < stringImage.Length; y++)
         {
             _handler.WriteLine(y, stringImage[y], 1);
-
-            //for (int x = 0; x < stringImage[y].Length; x++)
-            //{
-            //    char currentPixel = stringImage[y][x];
-            //    _handler.Write(x,y,currentPixel,1,"Picture");
-            //}
         }
     }
 
     private void ContinuousPictureDisplay(string[] images)
     {
         var timer = new Stopwatch();
+
+        IList<(string name, string[] data)> convertedImageList = new List<(string name, string[] data)>();
+ 
+        foreach (var image in images)
+        {
+            var imageUrl = FileHelper.GetImageUrl(image);
+            var stringImage = _imageConverter.GetStringImageMatrix(
+                imageUrl, MainConfiguration.ReverseVocab);
+
+            convertedImageList.Add((image, stringImage));
+        }
+
         while (true)
         {
-            foreach (var image in images)
+            foreach (var image in convertedImageList)
             {
                 timer.Reset();
                 timer.Start();
 
-                SinglePictureDisplay(image, false);
+                for (int y = 0; y < image.data.Length; y++)
+                {
+                    _handler.WriteLine(y, image.data[y], 1);
+                }
 
                 timer.Stop();
 
-                Debug.WriteLine($"Drawing {image} took time to process {timer.ElapsedMilliseconds}");
+                Debug.WriteLine($"Drawing {image.name} took time to process {timer.ElapsedMilliseconds}");
 
                 //Thread.Sleep(100);
             }
